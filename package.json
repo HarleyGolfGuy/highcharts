@@ -1,6 +1,6 @@
 {
     "name": "tutorial",
-    "description": "a tutorial on using node, twitter, redis, and express",
+    "description": "using node.js, express, jquery, and highcharts",
     "version": "0.0.1",
     "dependencies": {
 	     "express": "*",
