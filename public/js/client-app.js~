@@ -1,0 +1,7 @@
+var main = function () {
+    $.getJSON("/lots.json", function (response) {
+        $("body").append("<p>Number of Lots:  "+response+"</p>");
+    });
+};
+
+$(document).ready(main);

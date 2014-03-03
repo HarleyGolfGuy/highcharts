@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+  <head>
+   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+   <script src="http://code.highcharts.com/highcharts.js"></script>
+    <script>
+       $(document).ready(function() {
+          /* Set Options */
+          var options = {
+             chart: {
+                renderTo: 'container',
+                type: 'line'
+             },
+             title: {
+                text: 'Lot Analysis'
+             },
+             xAxis: {
+                categories: []
+             },
+             yAxis: {
+                title: {
+                   text: 'Units'
+                }
+             },
+             series: []
+          };
+           var chart = new Highcharts.Chart(options);
+
+           $.getJSON("/products.json", function(data){
+               $(data.products).each(function()
+               {
+                   var option = $('<option />');
+                   option.attr('value', this.PRODUCT_NAME).text(this.PRODUCT_NAME);
+                   $('#ctlProduct').append(option);
+               });
+           })
+
+          /* Load Data */
+          //$.getJSON("/lots.json/" + $("#ctlProduct option:selected").val(), function (data) {
+           $('#ctlProduct').on('change', function(){
+               var selVal = $("#ctlProduct").val();
+               $.getJSON("/lots.json/" + selVal, function (data) {
+                 var series = {
+                    name: 'NumParts',
+                    data: []
+                 }
+
+                 var series2 = {
+                    name: 'NumGoodParts',
+                    data: []
+                 }
+
+                 $.each(data.lots, function( index, value ) {
+                     options.xAxis.categories.push(value.LOT_ID);
+                     series.data.push(value.NB_PARTS);
+                     series2.data.push(value.NB_PARTS_GOOD);
+                 });
+                 options.series.pop();
+                 options.series.pop();
+                 options.series.push(series);
+                 options.series.push(series2);
+                 options.title.text = "Lot Analysis for " + data.lots[0]['PRODUCT_NAME'];
+                 //options.title = 'Lot Analysis for ' + data.lots.get('PRODUCT_NAME');
+                // options.setTitle({text: "New Title"});
+                 var chart = new Highcharts.Chart(options);
+              });
+
+           }); // end change function
+
+       });
+    </script>
+
+  </head>
+
+  <body>
+
+    <form>
+        <select id="ctlProduct">
+            <option value="1">Select a Product...</option>
+        </select>
+    </form>
+    <div id="container" style="width:100%; height:400px;"></div>
+  </body>
+</html>
+
